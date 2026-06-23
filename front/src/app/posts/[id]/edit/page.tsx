@@ -5,7 +5,7 @@ import { apiFetch } from "@/lib/backend/client";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
-type PostWithContentDto = components["schemas"]["PostDto"];
+type PostWithContentDto = components["schemas"]["PostWithContentDto"];
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
