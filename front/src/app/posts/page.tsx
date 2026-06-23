@@ -9,7 +9,11 @@ export default function Page() {
     const [posts, setPosts] = useState<PostDto[] | null>(null);
 
     useEffect(() => {
-        apiFetch(`/api/v1/posts`).then(setPosts);
+        apiFetch(`/api/v1/posts`)
+            .then(setPosts)
+            .catch((error) => {
+                alert(`${error.resultCode} : ${error.msg}`);
+            });
     }, []);
 
     if (posts == null) return <div>로딩중...</div>;
