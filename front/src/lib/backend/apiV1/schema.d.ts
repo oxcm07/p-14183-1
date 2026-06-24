@@ -205,9 +205,9 @@ export interface components {
             content: string;
         };
         RsDataVoid: {
-            resultCode?: string;
-            msg?: string;
-            data?: unknown;
+            resultCode: string;
+            msg: string;
+            data: unknown;
         };
         PostModifyReqBody: {
             title: string;
@@ -231,9 +231,9 @@ export interface components {
             summary: string;
         };
         RsDataPostDto: {
-            resultCode?: string;
-            msg?: string;
-            data?: components["schemas"]["PostDto"];
+            resultCode: string;
+            msg: string;
+            data: components["schemas"]["PostDto"];
         };
         PostCommentWriteReqBody: {
             content: string;
@@ -253,9 +253,9 @@ export interface components {
             content: string;
         };
         RsDataPostCommentDto: {
-            resultCode?: string;
-            msg?: string;
-            data?: components["schemas"]["PostCommentDto"];
+            resultCode: string;
+            msg: string;
+            data: components["schemas"]["PostCommentDto"];
         };
         MemberJoinReqBody: {
             username: string;
@@ -272,9 +272,9 @@ export interface components {
             name: string;
         };
         RsDataMemberDto: {
-            resultCode?: string;
-            msg?: string;
-            data?: components["schemas"]["MemberDto"];
+            resultCode: string;
+            msg: string;
+            data: components["schemas"]["MemberDto"];
         };
         MemberLoginReqBody: {
             username: string;
@@ -286,9 +286,9 @@ export interface components {
             accessToken?: string;
         };
         RsDataMemberLoginResBody: {
-            resultCode?: string;
-            msg?: string;
-            data?: components["schemas"]["MemberLoginResBody"];
+            resultCode: string;
+            msg: string;
+            data: components["schemas"]["MemberLoginResBody"];
         };
         PostWithContentDto: {
             /** Format: int32 */
