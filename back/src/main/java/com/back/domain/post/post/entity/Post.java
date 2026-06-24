@@ -25,6 +25,7 @@ public class Post extends BaseEntity {
     private Member author;
     private String title;
     private String content;
+    private String summary;
 
     @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private final List<PostComment> comments = new ArrayList<>();

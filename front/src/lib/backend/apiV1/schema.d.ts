@@ -228,6 +228,7 @@ export interface components {
             authorId: number;
             authorName: string;
             title: string;
+            summary: string;
         };
         RsDataPostDto: {
             resultCode?: string;
