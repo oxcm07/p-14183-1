@@ -1,14 +1,15 @@
 package com.back.domain.member.member.dto;
 
 import com.back.domain.member.member.entity.Member;
+import jakarta.annotation.Nonnull;
 
 import java.time.LocalDateTime;
 
 public record MemberDto(
-        int id,
-        LocalDateTime createDate,
-        LocalDateTime modifyDate,
-        String name
+        @Nonnull int id,
+        @Nonnull LocalDateTime createDate,
+        @Nonnull LocalDateTime modifyDate,
+        @Nonnull String name
 ) {
     public MemberDto(Member member) {
         this(

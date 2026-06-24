@@ -1,16 +1,17 @@
 package com.back.domain.post.post.dto;
 
 import com.back.domain.post.post.entity.Post;
+import jakarta.annotation.Nonnull;
 
 import java.time.LocalDateTime;
 
 public record PostDto(
-        int id,
-        LocalDateTime createDate,
-        LocalDateTime modifyDate,
-        int authorId,
-        String authorName,
-        String title
+        @Nonnull int id,
+        @Nonnull LocalDateTime createDate,
+        @Nonnull LocalDateTime modifyDate,
+        @Nonnull int authorId,
+        @Nonnull String authorName,
+        @Nonnull String title
 ) {
     public PostDto(Post post) {
         this(

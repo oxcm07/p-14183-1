@@ -1,17 +1,18 @@
 package com.back.domain.post.post.dto;
 
 import com.back.domain.post.post.entity.Post;
+import jakarta.annotation.Nonnull;
 
 import java.time.LocalDateTime;
 
 public record PostWithContentDto(
-        int id,
-        LocalDateTime createDate,
-        LocalDateTime modifyDate,
-        int authorId,
-        String authorName,
-        String title,
-        String content
+        @Nonnull int id,
+        @Nonnull LocalDateTime createDate,
+        @Nonnull LocalDateTime modifyDate,
+        @Nonnull int authorId,
+        @Nonnull String authorName,
+        @Nonnull String title,
+        @Nonnull String content
 ) {
     public PostWithContentDto(Post post) {
         this(
