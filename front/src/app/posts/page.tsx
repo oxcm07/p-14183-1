@@ -1,9 +1,12 @@
 "use client";
 
-import type { components } from "@/lib/backend/apiV1/schema";
-import { apiFetch } from "@/lib/backend/client";
 import Link from "next/link";
+
 import { useEffect, useState } from "react";
+
+import { apiFetch } from "@/lib/backend/client";
+
+import type { components } from "@/lib/backend/apiV1/schema";
 
 type PostDto = components["schemas"]["PostDto"];
 

@@ -1,9 +1,12 @@
 "use client";
 
-import type { components } from "@/lib/backend/apiV1/schema";
-import { apiFetch } from "@/lib/backend/client";
 import { useRouter } from "next/navigation";
+
 import { use, useEffect, useState } from "react";
+
+import { apiFetch } from "@/lib/backend/client";
+
+import type { components } from "@/lib/backend/apiV1/schema";
 
 type PostWithContentDto = components["schemas"]["PostWithContentDto"];
 
