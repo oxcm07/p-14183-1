@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-import { apiFetch } from "@/lib/backend/client";
+import client from "@/lib/backend/client";
 
 import type { components } from "@/lib/backend/apiV1/schema";
 
@@ -18,20 +18,40 @@ function usePost(id: number) {
   const [post, setPost] = useState<PostWithContentDto | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/v1/posts/${id}`)
-      .then(setPost)
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+    client
+      .GET("/api/v1/posts/{id}", {
+        params: {
+          path: {
+            id,
+          },
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
+        setPost(res.data);
       });
   }, [id]);
 
   const deletePost = (id: number, onSuccess: () => void) => {
-    apiFetch(`/api/v1/posts/${id}`, {
-      method: "DELETE",
-    })
-      .then(onSuccess)
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+    client
+      .DELETE("/api/v1/posts/{id}", {
+        params: {
+          path: {
+            id,
+          },
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
+        onSuccess();
       });
   };
 
@@ -47,10 +67,20 @@ function usePostComments(postId: number) {
   );
 
   useEffect(() => {
-    apiFetch(`/api/v1/posts/${postId}/comments`)
-      .then(setPostComments)
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+    client
+      .GET("/api/v1/posts/{postId}/comments", {
+        params: {
+          path: {
+            postId,
+          },
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+        setPostComments(res.data);
       });
   }, [postId]);
 
@@ -58,18 +88,26 @@ function usePostComments(postId: number) {
     commentId: number,
     onSuccess: (data: RsDataVoid) => void,
   ) => {
-    apiFetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
-      method: "DELETE",
-    })
-      .then((data) => {
+    client
+      .DELETE("/api/v1/posts/{postId}/comments/{id}", {
+        params: {
+          path: {
+            postId,
+            id: commentId,
+          },
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
         if (postComments == null) return;
 
         setPostComments(postComments.filter((c) => c.id != commentId));
 
-        onSuccess(data);
-      })
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+        onSuccess(res.data);
       });
   };
 
@@ -77,21 +115,28 @@ function usePostComments(postId: number) {
     content: string,
     onSuccess: (data: RsDataPostCommentDto) => void,
   ) => {
-    apiFetch(`/api/v1/posts/${postId}/comments`, {
-      method: "POST",
-      body: JSON.stringify({
-        content,
-      }),
-    })
-      .then((data) => {
+    client
+      .POST("/api/v1/posts/{postId}/comments", {
+        params: {
+          path: {
+            postId,
+          },
+        },
+        body: {
+          content,
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
         if (postComments == null) return;
 
-        setPostComments([...postComments, data.data]);
+        setPostComments([...postComments, res.data.data]);
 
-        onSuccess(data);
-      })
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+        onSuccess(res.data);
       });
   };
 
@@ -100,11 +145,24 @@ function usePostComments(postId: number) {
     content: string,
     onSuccess: (data: RsDataVoid) => void,
   ) => {
-    apiFetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
-      method: "PUT",
-      body: JSON.stringify({ content }),
-    })
-      .then((data) => {
+    client
+      .PUT("/api/v1/posts/{postId}/comments/{id}", {
+        params: {
+          path: {
+            postId,
+            id: commentId,
+          },
+        },
+        body: {
+          content,
+        },
+      })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
         if (postComments == null) return;
 
         setPostComments(
@@ -113,10 +171,7 @@ function usePostComments(postId: number) {
           ),
         );
 
-        onSuccess(data);
-      })
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+        onSuccess(res.data);
       });
   };
 
@@ -150,10 +205,7 @@ function PostInfo({ postState }: { postState: ReturnType<typeof usePost> }) {
       <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
 
       <div className="flex gap-2">
-        <button
-          className="p-2 rounded border cursor-pointer"
-          onClick={deletePost}
-        >
+        <button className="p-2 rounded border" onClick={deletePost}>
           삭제
         </button>
         <Link className="p-2 rounded border" href={`/posts/${post.id}/edit`}>
@@ -172,7 +224,7 @@ function PostCommentWrite({
   const { postId, writeComment } = postCommentsState;
 
   const handleCommentWriteFormSubmit = (
-    e: React.SyntheticEvent<HTMLFormElement>,
+    e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
 
@@ -187,7 +239,6 @@ function PostCommentWrite({
     if (contentTextarea.value.length === 0) {
       alert("댓글 내용을 입력해주세요.");
       contentTextarea.focus();
-
       return;
     }
 
@@ -353,16 +404,14 @@ function PostCommentWriteAndList({
     <>
       <PostCommentWrite postCommentsState={postCommentsState} />
 
-      <hr className="my-2" />
-
       <PostCommentList postCommentsState={postCommentsState} />
     </>
   );
 }
 
-export default function Page() {
-  const { id: idStr } = useParams<{ id: string }>();
-  const id = Number(idStr);
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idStr } = use(params);
+  const id = parseInt(idStr);
 
   const postState = usePost(id);
   const postCommentsState = usePostComments(id);
@@ -372,8 +421,6 @@ export default function Page() {
       <h1>글 상세페이지</h1>
 
       <PostInfo postState={postState} />
-
-      <hr className="my-2" />
 
       <PostCommentWriteAndList postCommentsState={postCommentsState} />
     </>

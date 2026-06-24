@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { use, useEffect, useState } from "react";
 
-import { apiFetch } from "@/lib/backend/client";
+import client from "@/lib/backend/client";
 
 import type { components } from "@/lib/backend/apiV1/schema";
 
@@ -19,11 +19,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [post, setPost] = useState<PostWithContentDto | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/v1/posts/${id}`)
-      .then(setPost)
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
-      });
+    client
+      .GET("/api/v1/posts/{id}", {
+        params: {
+          path: {
+            id,
+          },
+        },
+      })
+      .then((res) => res.data && setPost(res.data));
   }, [id]);
 
   if (post == null) return <div>로딩중...</div>;
@@ -54,19 +58,26 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       return;
     }
 
-    apiFetch(`/api/v1/posts/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        title: titleInput.value,
-        content: contentTextarea.value,
-      }),
-    })
-      .then((data) => {
-        alert(data.msg);
-        router.replace(`/posts/${id}`);
+    client
+      .PUT("/api/v1/posts/{id}", {
+        params: {
+          path: {
+            id,
+          },
+        },
+        body: {
+          title: titleInput.value,
+          content: contentTextarea.value,
+        },
       })
-      .catch((error) => {
-        alert(`${error.resultCode} : ${error.msg}`);
+      .then((res) => {
+        if (res.error) {
+          alert(res.error.msg);
+          return;
+        }
+
+        alert(res.data.msg);
+        router.replace(`/posts/${id}`);
       });
   };
 
